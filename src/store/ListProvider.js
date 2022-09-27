@@ -8,10 +8,10 @@ const defaultListState = {
 };
 const listReducer = (state, action) => {
   // eslint-disable-next-line default-case
-  switch (action.type ) {
-    case action.type === 'ADD':
+  switch (action.type) {
+    case 'ADD':
       return addToList(state,action);
-    case action.type === 'REMOVE':
+    case 'REMOVE':
       return removeToList(state,action)
     default:
     return defaultListState;
@@ -28,7 +28,7 @@ const addToList = (state, action) => {
 		if (existingListItem) {
 			const updatedItem = {
 				...existingListItem,
-				amount: existingListItem.amount + action.item.amount,
+				qty: existingListItem.qty + action.item.qty,
 			};
 			updatedItems = [...state.items];
 			updatedItems[existingListItemIndex] = updatedItem;
@@ -46,10 +46,10 @@ const removeToList =  (state, action) => {
     );
     const existingItem = state.items[existingListItemIndex];
      let updatedItems;
-    if (existingItem.amount === 1) {
+    if (existingItem.qty === 1) {
       updatedItems = state.items.filter(item => item.id !== action.id);
     } else {
-      const updatedItem = { ...existingItem, amount: existingItem.amount - 1 };
+      const updatedItem = { ...existingItem, qty: existingItem.qty - 1 };
       updatedItems = [...state.items];
       updatedItems[existingListItemIndex] = updatedItem;
     }
@@ -66,6 +66,7 @@ const ListProvider = (props) => {
 	);
 
 	const addItemToListHandler = (item) => {
+    console.log(item);
 		dispatchListAction({ type: 'ADD', item: item });
 	};
 
