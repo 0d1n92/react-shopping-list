@@ -1,3 +1,4 @@
+import { PanoramaRounded } from '@mui/icons-material';
 import { useReducer } from 'react';
 import PRODUCTS from '../data/Products';
 
@@ -9,19 +10,33 @@ const defaultListState = {
 const listReducer = (state, action) => {
   // eslint-disable-next-line default-case
   switch (action.type) {
-    case 'ADD':
-      return addToList(state,action);
-    case 'REMOVE':
-      return removeToList(state,action)
-    default:
-    return defaultListState;
+		case 'ADD':
+			return addToList(state, action);
+		case 'REMOVE':
+			return removeToList(state, action);
+		case 'UPDATE':
+			return updateItem(state, action);
+		case 'CHECK':
+			return checkedToList(state, action);
+		default:
+			return defaultListState;
+	}
+}
 
-  }
+const updateItem = (state, action) => {
+  const existingListItemIndex = state.items.findIndex(
+    (item)=> item.id === action.item.id
+  )
+  let updatedItems = [...state.items];
+  updatedItems[existingListItemIndex].name = action.item.value;
+  return {
+		items: updatedItems,
+	};
 }
 
 const addToList = (state, action) => {
    const existingListItemIndex = state.items.findIndex(
-			(item) => item.id === action.item.id
+			(item) => item.name.toLowerCase() === action.item.name.toLowerCase()
 		);
 		const existingListItem = state.items[existingListItemIndex];
 		let updatedItems = {};
@@ -59,6 +74,19 @@ const removeToList =  (state, action) => {
     };
 }
 
+const checkedToList = (state, action) => {
+   const existingListItemIndex = state.items.findIndex(
+			(item) => item.id === action.item.row.id
+		);
+    let updatedItems = [...state.items];
+    updatedItems[existingListItemIndex].checked = !action.item.value;
+    console.log(updatedItems);
+		 return {
+      items: updatedItems,
+    };
+}
+
+
 const ListProvider = (props) => {
 	const [listState, dispatchListAction] = useReducer(
 		listReducer,
@@ -66,9 +94,16 @@ const ListProvider = (props) => {
 	);
 
 	const addItemToListHandler = (item) => {
-    console.log(item);
 		dispatchListAction({ type: 'ADD', item: item });
 	};
+
+  const updateItemtHandler = (item) => {
+    dispatchListAction({ type: 'UPDATE', item: item });
+  };
+
+  const checkItemHandler= (item)=> {
+    	dispatchListAction({ type: 'CHECK', item: item });
+  }
 
 	const removeItemFromListHandler = (id) => {
 		dispatchListAction({ type: 'REMOVE', id: id });
@@ -78,6 +113,8 @@ const ListProvider = (props) => {
 		items: listState.items,
 		addItem: addItemToListHandler,
 		removeItem: removeItemFromListHandler,
+		updateItem: updateItemtHandler,
+		checkItem: checkItemHandler,
 	};
 
 	return (

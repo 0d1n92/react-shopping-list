@@ -2,22 +2,26 @@ const PRODUCTS = [
 	{
 		id: 1,
 		name: 'Pane in casseta',
-		qty: 0,
+		qty: 1,
+		checked: false,
 	},
 	{
 		id: 2,
 		name: 'Latte',
-		qty: 0,
+		qty: 1,
+		checked: false,
 	},
 	{
 		id: 3,
 		name: 'Birra',
-		qty: 0,
+		qty: 1,
+		checked: false,
 	},
 	{
 		id: 4,
 		name: 'Mele',
-		qty: 0,
+		qty: 1,
+		checked: false,
 	},
 ];
 

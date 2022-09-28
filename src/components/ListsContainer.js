@@ -1,49 +1,91 @@
 
-import { Button, Grid} from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
+import { Grid} from '@mui/material';
+import { DataGrid, } from '@mui/x-data-grid';
 import { Container } from "@mui/system";
-import { useContext } from 'react';
+import { Fragment, useContext, useState} from 'react';
 import ListContext from '../store/list-context';
 import BoxToolbar from "./BoxToolbar";
+import IconButton from '@mui/material/IconButton';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 
 const ListContainer = () => {
   const listCtx = useContext(ListContext);
+  const [rowTable, setRowTable] = useState(listCtx.items);
+  const [filtred, setFiltered] = useState(false);
+  const handleRowSearch = (e) => {
+    if (e.target.value.length > 3) {
+      let finded= [];
+			rowTable.forEach((item) => {
+        if(item.name.toLowerCase().includes(e.target.value.toLowerCase())){
+            finded.push(item);
+        }
+			});
+      setRowTable(finded);
+    } else {
+      setRowTable(listCtx.items);
+    }
+	};
+  const handleFilter = (e)=> {
+      e.preventDefault();
+      if(!filtred){
+        setFiltered(true);
+        let finded = listCtx.items.filter((item) => {
+          return item.checked === true;
+        });
+        setRowTable(finded);
+      } else {
+        setFiltered(false);
+        setRowTable(listCtx.items);
+      }
+    }
+  const handleCellClick = (param, event) => {
+		event.stopPropagation();
+     listCtx.checkItem(param);
+	};
+
+
+ const handleRowEditCommit= (params,e) => {
+		listCtx.updateItem(params)
+  };
+
   const columns = [
 		{
 			field: 'name',
 			headerName: 'Product',
 			width: 130,
+			editable: true,
 		},
 		{ field: 'qty', headerName: 'Quantity', width: 130 },
 		{
-			field: 'Increases',
+			field: 'actions',
+      width: 250,
 			renderCell: (rowItem) => {
 				return (
-					<Button
-						variant="contained"
-						color="primary"
-						onClick={(e) => {
-							listCtx.addItem({ ...rowItem.row, qty: 1 });
-						}}
-					>
-						Increases
-					</Button>
-				);
-			},
-		},
-		{
-			field: 'Delete',
-			renderCell: (rowItem) => {
-				return (
-					<Button
-						variant="contained"
-						color="primary"
-						onClick={(event) => {
-							listCtx.removeItem(rowItem.row.id);
-						}}
-					>
-						Delete
-					</Button>
+					<Fragment>
+						<IconButton
+							onClick={(e) => {
+								listCtx.addItem({ ...rowItem.row, qty: 1 });
+                rowItem.row.qty += 1
+
+							}}
+							aria-label="delete"
+						>
+							<AddIcon />
+						</IconButton>
+
+						<IconButton
+							onClick={(event) => {
+								listCtx.removeItem(rowItem.row.id);
+                rowItem.row.qty -= 1;
+                if(rowItem.row.qty < 1 ){
+
+                }
+							}}
+						>
+							<RemoveIcon />
+						</IconButton>
+					</Fragment>
 				);
 			},
 		},
@@ -51,16 +93,16 @@ const ListContainer = () => {
   return (
 		<Container>
 			<Grid container justify="center">
-				<BoxToolbar />
+				<BoxToolbar filterChecked={handleFilter} onSearch={handleRowSearch} />
 				<DataGrid
+					disableSelectionOnClick={true}
 					autoHeight={true}
 					rowHeight={120}
-					rows={listCtx.items}
+					rows={rowTable}
 					columns={columns}
-					pageSize={5}
+					onCellEditCommit={handleRowEditCommit}
 					checkboxSelection
-					/* onCellClick={handleCellClick}
-					onRowClick={handleRowClick} */
+					onCellClick={handleCellClick}
 				/>
 			</Grid>
 		</Container>

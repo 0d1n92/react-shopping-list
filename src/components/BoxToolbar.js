@@ -1,12 +1,28 @@
-import React from "react";
+import { useContext, useState } from 'react';
 import Typography from '@mui/material/Typography';
-import ToolBarSearch from './ToolBarSearch';
+import ToolBarInput from './ToolBarInput';
+import ListContext from '../store/list-context';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
 
-import { AppBar,Toolbar } from '@mui/material';
+import { AppBar, Button, IconButton, Toolbar } from '@mui/material';
 
+const BoxToolbar = (props) => {
+  const [enteredItem, setEnteredItem]= useState('');
+  const listCtx = useContext(ListContext);
 
-const BoxToolbar = () => {
-  return (
+  const onChangeAddItem = (e) => {
+		e.preventDefault();
+		setEnteredItem(e.target.value);
+	};
+  const addItemHeadler =() => {
+      listCtx.addItem({
+				id: listCtx.items[listCtx.items.length -1].id ++,
+				name: enteredItem,
+				qty: 1,
+			});
+  }
+
+	return (
 		<AppBar position="static">
 			<Toolbar>
 				<Typography
@@ -15,12 +31,23 @@ const BoxToolbar = () => {
 					component="div"
 					sx={{ display: { xs: 'none', sm: 'block' } }}
 				>
-					Lista della spesa
+					SHOPPING LIST
 				</Typography>
-				<ToolBarSearch placeholder={'Search...'}></ToolBarSearch>
+				<ToolBarInput
+					onChange={onChangeAddItem}
+					placeholder={'Add item'}
+				></ToolBarInput>
+				<Button onClick={addItemHeadler}>Add</Button>
+				<ToolBarInput
+					onChange={props.onSearch}
+					placeholder={'Search'}
+				></ToolBarInput>
+				<IconButton title="filtra per completati" onClick={props.filterChecked}>
+					<FilterAltIcon />
+				</IconButton>
 			</Toolbar>
 		</AppBar>
 	);
-}
+};
 
 export default BoxToolbar;
