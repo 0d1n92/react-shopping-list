@@ -14,13 +14,7 @@ const BoxToolbar = (props) => {
 		e.preventDefault();
 		setEnteredItem(e.target.value);
 	};
-  const addItemHeadler =() => {
-      listCtx.addItem({
-				id: listCtx.items[listCtx.items.length -1].id ++,
-				name: enteredItem,
-				qty: 1,
-			});
-  }
+
 
 	return (
 		<AppBar position="static">
@@ -37,7 +31,7 @@ const BoxToolbar = (props) => {
 					onChange={onChangeAddItem}
 					placeholder={'Add item'}
 				></ToolBarInput>
-				<Button onClick={addItemHeadler}>Add</Button>
+				<Button onClick={() => {props.onAdd(enteredItem)}}>Add</Button>
 				<ToolBarInput
 					onChange={props.onSearch}
 					placeholder={'Search'}

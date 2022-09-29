@@ -2,25 +2,25 @@ const PRODUCTS = [
 	{
 		id: 1,
 		name: 'Pane in casseta',
-		qty: 1,
+		qty: 3,
 		checked: false,
 	},
 	{
 		id: 2,
 		name: 'Latte',
-		qty: 1,
+		qty: 10,
 		checked: false,
 	},
 	{
 		id: 3,
 		name: 'Birra',
-		qty: 1,
+		qty: 30,
 		checked: false,
 	},
 	{
 		id: 4,
 		name: 'Mele',
-		qty: 1,
+		qty: 20,
 		checked: false,
 	},
 ];

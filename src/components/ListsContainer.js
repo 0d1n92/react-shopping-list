@@ -2,12 +2,13 @@
 import { Grid} from '@mui/material';
 import { DataGrid, } from '@mui/x-data-grid';
 import { Container } from "@mui/system";
-import { Fragment, useContext, useState} from 'react';
+import { Fragment, useCallback, useContext, useEffect, useState } from 'react';
 import ListContext from '../store/list-context';
 import BoxToolbar from "./BoxToolbar";
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const ListContainer = () => {
   const listCtx = useContext(ListContext);
@@ -26,6 +27,48 @@ const ListContainer = () => {
       setRowTable(listCtx.items);
     }
 	};
+
+   const addItemHeadler = useCallback(
+			(newname) => {
+        let newitem = {
+					id: listCtx.items[listCtx.items.length - 1].id++,
+					name: newname,
+					qty: 1,
+				};
+
+				listCtx.addItem({
+					id: listCtx.items[listCtx.items.length - 1].id++,
+					name: newname,
+					qty: 1,
+				});
+
+        setRowTable((prev)=>{
+           const existingListItemIndex = prev.findIndex(
+						(item) => item.name.toLowerCase() === newitem.name.toLowerCase()
+					);
+          if (existingListItemIndex !== -1) {
+            prev[existingListItemIndex].qty += 1;
+            return [...prev];
+          }
+          return ([...prev,newitem]);
+        }
+        );
+			}
+      ,
+			[]
+		);
+  const renderRemove = useCallback(
+		(rowItem) => {
+			listCtx.removeItem(rowItem.row);
+      if( rowItem.row.qty > 0){
+        rowItem.row.qty -= 1;
+      } else {
+        setRowTable(listCtx.items)
+      }
+		},
+		[]
+	);
+
   const handleFilter = (e)=> {
       e.preventDefault();
       if(!filtred){
@@ -66,8 +109,7 @@ const ListContainer = () => {
 						<IconButton
 							onClick={(e) => {
 								listCtx.addItem({ ...rowItem.row, qty: 1 });
-                rowItem.row.qty += 1
-
+								rowItem.row.qty += 1;
 							}}
 							aria-label="delete"
 						>
@@ -76,14 +118,20 @@ const ListContainer = () => {
 
 						<IconButton
 							onClick={(event) => {
-								listCtx.removeItem(rowItem.row.id);
-                rowItem.row.qty -= 1;
-                if(rowItem.row.qty < 1 ){
+							renderRemove(rowItem);
 
-                }
 							}}
 						>
 							<RemoveIcon />
+						</IconButton>
+						<IconButton
+							onClick={(e) => {
+								listCtx.addItem({ ...rowItem.row, qty: 1 });
+								rowItem.row.qty += 1;
+							}}
+							aria-label="delete"
+						>
+							<DeleteIcon />
 						</IconButton>
 					</Fragment>
 				);
@@ -93,7 +141,11 @@ const ListContainer = () => {
   return (
 		<Container>
 			<Grid container justify="center">
-				<BoxToolbar filterChecked={handleFilter} onSearch={handleRowSearch} />
+				<BoxToolbar
+					filterChecked={handleFilter}
+					onSearch={handleRowSearch}
+					onAdd={addItemHeadler}
+				/>
 				<DataGrid
 					disableSelectionOnClick={true}
 					autoHeight={true}

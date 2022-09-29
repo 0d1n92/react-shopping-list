@@ -1,4 +1,4 @@
-import { PanoramaRounded } from '@mui/icons-material';
+
 import { useReducer } from 'react';
 import PRODUCTS from '../data/Products';
 
@@ -18,6 +18,8 @@ const listReducer = (state, action) => {
 			return updateItem(state, action);
 		case 'CHECK':
 			return checkedToList(state, action);
+		case 'DELETE':
+			return dalateToList(state, action);
 		default:
 			return defaultListState;
 	}
@@ -57,30 +59,36 @@ const addToList = (state, action) => {
 
 const removeToList =  (state, action) => {
     const existingListItemIndex = state.items.findIndex(
-      (item) => item.id === action.id
+      (item) => item.id === action.item.id
     );
     const existingItem = state.items[existingListItemIndex];
      let updatedItems;
-    if (existingItem.qty === 1) {
-      updatedItems = state.items.filter(item => item.id !== action.id);
+   if (action.item.qty === 0) {
+      updatedItems = state.items.filter(item => item.id !== action.item.id);
     } else {
-      const updatedItem = { ...existingItem, qty: existingItem.qty - 1 };
+      const updatedItem = { ...existingItem, qty: action.item.qty };
       updatedItems = [...state.items];
       updatedItems[existingListItemIndex] = updatedItem;
     }
 
     return {
-      items: updatedItems,
-    };
-}
 
+			items: updatedItems,
+		};
+}
+const dalateToList = (state, action) => {
+
+	let updatedItems = state.items.filter((item) => item.id !== action.id);
+	return {
+		items: updatedItems,
+	};
+};
 const checkedToList = (state, action) => {
    const existingListItemIndex = state.items.findIndex(
 			(item) => item.id === action.item.row.id
 		);
     let updatedItems = [...state.items];
-    updatedItems[existingListItemIndex].checked = !action.item.value;
-    console.log(updatedItems);
+    updatedItems[existingListItemIndex].checked = !action.value;
 		 return {
       items: updatedItems,
     };
@@ -105,8 +113,12 @@ const ListProvider = (props) => {
     	dispatchListAction({ type: 'CHECK', item: item });
   }
 
-	const removeItemFromListHandler = (id) => {
-		dispatchListAction({ type: 'REMOVE', id: id });
+	const removeItemFromListHandler = (item) => {
+		dispatchListAction({ type: 'REMOVE', item: item });
+	};
+
+  const deleteItemFromListHandler = (id) => {
+			dispatchListAction({ type: 'DELETE', id: id });
 	};
 
 	const listContext = {
@@ -115,6 +127,7 @@ const ListProvider = (props) => {
 		removeItem: removeItemFromListHandler,
 		updateItem: updateItemtHandler,
 		checkItem: checkItemHandler,
+		deleteItem: deleteItemFromListHandler,
 	};
 
 	return (

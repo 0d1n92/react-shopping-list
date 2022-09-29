@@ -4,9 +4,10 @@ import PRODUCTS from '../data/Products';
 const ListContext = React.createContext({
 	items: PRODUCTS,
 	addItem: (item) => {},
-	removeItem: (id) => {},
+	removeItem: (item) => {},
 	updateItem: (item) => {},
 	checkItem: (item) => {},
+  delete:(id) => {},
 });
 
 export default ListContext;
