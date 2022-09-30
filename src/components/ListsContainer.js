@@ -96,7 +96,6 @@ const ListContainer = () => {
             <IconButton
               onClick={(e) => {
                 listCtx.addItem({ ...rowItem.row, qty: 1 });
-                rowItem.row.qty += 1;
               }}
               aria-label="delete"
             >
