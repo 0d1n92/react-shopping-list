@@ -75,6 +75,7 @@ const ListContainer = () => {
 
   const deleteRow = (e, id) => {
     listCtx.deleteItem(id);
+    setFind(false);
     setRowTable(listCtx.items);
   };
 
