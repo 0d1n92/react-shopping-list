@@ -12,7 +12,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 const ListContainer = () => {
   const listCtx = useContext(ListContext);
   const [rowTable, setRowTable] = useState(listCtx.items);
-  let addClick = true;
   const [filtred, setFiltered] = useState(false);
   const handleRowSearch = (e) => {
     if (e.target.value.length > 3) {
@@ -29,14 +28,14 @@ const ListContainer = () => {
   };
   useEffect(() => {
     setRowTable(listCtx.items);
-  }, [listCtx, addClick]);
+  }, [listCtx]);
 
   const addItemHeadler = (newname) => {
-    addClick = true;
     listCtx.addItem({
       id: listCtx.items[listCtx.items.length - 1].id++,
       name: newname,
       qty: 1,
+      checked: false,
     });
   };
 
@@ -65,8 +64,7 @@ const ListContainer = () => {
       setRowTable(listCtx.items);
     }
   };
-  const handleCellClick = (param, event) => {
-    event.stopPropagation();
+  const handleCellClick = (param) => {
     listCtx.checkItem(param);
   };
 
@@ -134,7 +132,10 @@ const ListContainer = () => {
           columns={columns}
           onCellEditCommit={handleRowEditCommit}
           checkboxSelection
-          onCellClick={handleCellClick}
+          onSelectionModelChange={(newSelectionModel) => {
+             const selectedRowsData = newSelectionModel.map((id) => rowTable.find((row) => row.id === id));
+             handleCellClick(selectedRowsData);
+          }}
         />
       </Grid>
     </Container>

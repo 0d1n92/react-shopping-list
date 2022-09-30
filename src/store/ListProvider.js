@@ -76,9 +76,19 @@ const delateToList = (state, action) => {
 };
 
 const checkedToList = (state, action) => {
-  const existingListItemIndex = state.items.findIndex((item) => item.id === action.item.row.id);
-  let updatedItems = [...state.items];
-  updatedItems[existingListItemIndex] = { ...updatedItems[existingListItemIndex], checked: !action.item.value };
+  action.item.forEach((item) => (item.checked = true));
+  let updatedItems = [];
+   state.items.forEach(
+    (item)=> {
+      let exist = action.item.find(x => x.id === item.id);
+      if(exist !== undefined) {
+        updatedItems.push(exist);
+      } else{
+         updatedItems.push({...item, checked:false});
+      }
+    }
+  )
+  
   return {
     items: updatedItems,
   };
