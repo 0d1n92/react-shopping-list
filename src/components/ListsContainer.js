@@ -13,6 +13,7 @@ const ListContainer = () => {
   const listCtx = useContext(ListContext);
   const [rowTable, setRowTable] = useState(listCtx.items);
   const [filtred, setFiltered] = useState(false);
+   const [find, setFind] = useState(false);
   const handleRowSearch = (e) => {
     if (e.target.value.length > 3) {
       let finded = [];
@@ -21,13 +22,17 @@ const ListContainer = () => {
           finded.push(item);
         }
       });
+       setFind(true);
       setRowTable(finded);
     } else {
       setRowTable(listCtx.items);
+       setFind(false);
     }
   };
   useEffect(() => {
+    if(!find){
     setRowTable(listCtx.items);
+    }
   }, [listCtx]);
 
   const addItemHeadler = (newname) => {
@@ -94,6 +99,8 @@ const ListContainer = () => {
             <IconButton
               onClick={(e) => {
                 listCtx.addItem({ ...rowItem.row, qty: 1 });
+                if(find)
+                rowItem.row.qty++;
               }}
               aria-label="delete"
             >
